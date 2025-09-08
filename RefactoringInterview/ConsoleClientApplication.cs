@@ -1,8 +1,8 @@
 using System;
-using RefactoringInterview.Core;
+using RefactoringInterview.Core.Application;
 using RefactoringInterview.Core.Domain;
 
-namespace RefactoringInterview.Core.Application
+namespace RefactoringInterview
 {
     public class ConsoleClientApplication : IClientApplication
     {
@@ -39,17 +39,17 @@ namespace RefactoringInterview.Core.Application
                 EncryptedPassword = password == confirmPassword ? Encrypt(password) : null
             };
         }
-        public string Encrypt(string password)
+        string Encrypt(string password)
         {
             return _passwordManager.Encrypt(password);
         }
-        public bool Compare(string password, string confirmPassword, out string errorMessage)
+        bool Compare(string password, string confirmPassword, out string errorMessage)
         {
             errorMessage = string.Empty;
             return _passwordManager.Compare(password, confirmPassword, out errorMessage);
         }
 
-        public bool Validate(string password, out string errorMessage)
+        bool Validate(string password, out string errorMessage)
         {
             errorMessage = string.Empty;
             return _passwordManager.Validate(password,out errorMessage);
