@@ -4,7 +4,7 @@ using RefactoringInterview.Core.Domain;
 
 namespace RefactoringInterview.Core.Application
 {
-    public class ConsoleClientApplication : IClientApplication, IPasswordManager
+    public class ConsoleClientApplication : IClientApplication
     {
         private readonly IPasswordManager _passwordManager;
         public ConsoleClientApplication(IPasswordManager passwordManager)
