@@ -14,13 +14,13 @@ namespace RefactoringInterview.Core.Application
 
         public User? GetUserInput()
         {
-            Console.Write("Enter a username");
+            Console.WriteLine("Enter a username: ");
             var username = Console.ReadLine();
-            Console.Write("Enter your full name");
+            Console.WriteLine("Enter your full name: ");
             var fullName = Console.ReadLine();
-            Console.Write("Enter your password");
+            Console.WriteLine("Enter your password: ");
             var password = Console.ReadLine();
-            Console.WriteLine("Re-enter your password");
+            Console.WriteLine("Re-enter your password: ");
             var confirmPassword = Console.ReadLine();
 
             var errorMessage = string.Empty;
