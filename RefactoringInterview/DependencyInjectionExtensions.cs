@@ -1,9 +1,14 @@
 ﻿using LiteDB;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using RefactoringInterview.Core;
+using RefactoringInterview.Core.Application;
 using RefactoringInterview.Core.Domain;
 using RefactoringInterview.Infrastructure;
-using RefactoringInterview.Core.Application;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace RefactoringInterview
 {
@@ -15,17 +20,27 @@ namespace RefactoringInterview
 
         public static IServiceCollection AddRefactoringInterviewServices(this IServiceCollection services)
         {
-            services.AddSingleton<LiteDatabase>(provider =>
+            services.AddTransient<LiteDatabase>(provider =>
             {
                 var config = provider.GetRequiredService<IConfiguration>();
                 var dbPath = config.GetSection(LiteDbSection)[DatabasePathKey] ?? DefaultDatabasePath;
                 return new LiteDatabase(dbPath);
             });
-            services.AddScoped<IUserRepository, LiteDbUserRepository>();
-            services.AddSingleton<IClientApplication, ConsoleClientApplication>();
-            services.AddSingleton<ISecurityManager, SecurityManager>();
-            services.AddSingleton<IPasswordManager, PasswordManager>();
-           
+            services.AddTransient<IUserRepository, LiteDbUserRepository>();
+            services.AddTransient<IClientApplication, ConsoleClientApplication>();
+            services.AddTransient<ISecurityManager, SecurityManager>();
+            services.AddTransient<IPasswordManager, PasswordManager>();
+            var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
+            
+            foreach (var dll in Directory.GetFiles(pluginPath, "*.dll"))
+            {
+                var assembly = Assembly.LoadFrom(dll);
+                var pluginType = assembly.GetTypes()
+                    .FirstOrDefault(t => typeof(IClientApplication).IsAssignableFrom(t) && !t.IsInterface);
+
+                if (pluginType != null)
+                    services.AddTransient(typeof(IClientApplication), pluginType);
+            }
             return services;
         }
     }
