@@ -31,7 +31,10 @@ namespace RefactoringInterview
             services.AddTransient<ISecurityManager, SecurityManager>();
             services.AddTransient<IPasswordManager, PasswordManager>();
             var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
-            
+
+            // Dynamic plugin loading for IClientApplication implementations
+            if (!Directory.Exists(pluginPath))
+                Directory.CreateDirectory(pluginPath);
             foreach (var dll in Directory.GetFiles(pluginPath, "*.dll"))
             {
                 var assembly = Assembly.LoadFrom(dll);
