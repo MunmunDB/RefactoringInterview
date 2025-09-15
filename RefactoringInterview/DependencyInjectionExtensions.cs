@@ -28,8 +28,14 @@ namespace RefactoringInterview
             });
             services.AddTransient<IUserRepository, LiteDbUserRepository>();
             services.AddTransient<IClientApplication, ConsoleClientApplication>();
-            services.AddTransient<ISecurityManager, SecurityManager>();
+            services.AddTransient<SecurityManager>();
             services.AddTransient<IPasswordManager, PasswordManager>();
+            // Error Handling Decorator for ISecurityManager
+            services.AddTransient<ISecurityManager>(sp =>
+            {
+                var inner = sp.GetRequiredService<SecurityManager>();
+                return new ErrorHandlingSecurityManager(inner);
+            });
             var pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
 
             // Dynamic plugin loading for IClientApplication implementations
